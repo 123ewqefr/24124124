@@ -27,13 +27,15 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-forge-fg5-${{ hashFiles('minecraft-credit-mod/**/*.gradle*') }}
+          key: ${{ runner.os }}-forge-fg5-${{ hashFiles('**/build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-forge-fg5-
 
       - name: Build mod JAR
-        working-directory: minecraft-credit-mod
         run: |
+          if [ -f "minecraft-credit-mod/build.gradle" ]; then
+            cd minecraft-credit-mod
+          fi
           chmod +x gradlew
           ./gradlew build --no-daemon --stacktrace
         env:
@@ -43,7 +45,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: creditmod-jar
-          path: minecraft-credit-mod/build/libs/creditmod-1.16.5-*.jar
+          path: |
+            build/libs/creditmod-1.16.5-*.jar
+            minecraft-credit-mod/build/libs/creditmod-1.16.5-*.jar
           if-no-files-found: error
           retention-days: 30
-
